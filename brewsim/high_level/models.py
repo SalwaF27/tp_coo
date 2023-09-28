@@ -7,7 +7,7 @@ class Departement(models.Model):
         def __str__(self):
                 return f"{self.numero} {self.prixparMcarre}"
 
-class Machine(models.Model):
+class Machine(models.Model):.
         nom = models.CharField(max_length=100)
         prix = models.IntegerField()
         def __str__(self):
@@ -54,3 +54,14 @@ class Prix(models.Model):
         prix = models.IntegerField()
         def __str__(self):
                 return f"{self.ingredient} {self.departement} {self.prix}"
+
+#Création des objets pour chaque classe
+
+departement=Departement()
+machine=Machine()
+ingredient=Ingredient()
+quantiteingredient=QuantiteIngredient()
+action=Action()
+recette=Recette()
+usine=Usine()
+prix=Prix()
