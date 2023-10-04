@@ -26,7 +26,8 @@ class QuantiteIngredient(models.Model):
         def __str__(self):
                 return f"{self.ingredient} {self.quantite}"
         def costs(self, departement):
-                return self.ingredient.prix_set.get(departement__numero=departement).prix * self.quantite
+            print(self.ingredient, departement)
+            return self.ingredient.prix_set.get(departement__numero=departement).prix * self.quantite
 
 class Action(models.Model):
         machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
