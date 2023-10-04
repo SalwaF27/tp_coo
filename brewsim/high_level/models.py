@@ -53,11 +53,14 @@ class Usine(models.Model):
             total=0
             for m in self.machines.all():
                 total= total + m.prix
+            stock_total=0
+            for m in self.stocks.all():
+                stock_total= stock_total + m.departement__numero
             return total
         def __str__(self):
                 return f"{self.departement} {self.taille} {self.machines} {self.recettes} {self.stocks}"
         def __cost__(self):
-                return (self.taille * self.departement.prixparMcarre ) + (self.costMachines())
+                return (self.taille * self.departement.prixparMcarre ) + (self.costMachines()+self.coststocks())
 
 
 class Prix(models.Model):
