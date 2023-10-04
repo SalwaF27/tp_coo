@@ -12,7 +12,7 @@ class Machine(models.Model):
         prix = models.IntegerField()
         def __str__(self):
                 return f"{self.nom} {self.prix}"
-        def __cost__(self):
+        def costs(self):
                 return self.prix
 
 class Ingredient(models.Model):
@@ -25,7 +25,7 @@ class QuantiteIngredient(models.Model):
         quantite = models.IntegerField()
         def __str__(self):
                 return f"{self.ingredient} {self.quantite}"
-        def __cost__(self, departement):
+        def costs(self, departement):
                 return self.ingredient.prix_set.get(departement__numero=departement).prix * self.quantite
 
 class Action(models.Model):
@@ -55,12 +55,12 @@ class Usine(models.Model):
                 total= total + m.prix
             stock_total=0
             for m in self.stocks.all():
-                stock_total= stock_total + m.departement__numero
-            return total
+                stock_total= stock_total + m.costs(self.departement.numero)
+            return total + stock_total
         def __str__(self):
                 return f"{self.departement} {self.taille} {self.machines} {self.recettes} {self.stocks}"
-        def __cost__(self):
-                return (self.taille * self.departement.prixparMcarre ) + (self.costMachines()+self.coststocks())
+        def costs(self):
+                return (self.taille * self.departement.prixparMcarre ) + (self.costMachines())
 
 
 class Prix(models.Model):
