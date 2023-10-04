@@ -1,4 +1,5 @@
 from django.db import models
+from json import dumps
 
 # Create your models here.
 class Departement(models.Model):
@@ -6,6 +7,9 @@ class Departement(models.Model):
         prixparMcarre = models.DecimalField(max_digits=10, decimal_places=2)
         def __str__(self):
                 return f"{self.numero} {self.prixparMcarre}"
+        def json(self):
+            return {"numero":self.numero, "prixparMcarre":float(self.prixparMcarre)}
+
 
 class Machine(models.Model):
         nom = models.CharField(max_length=100)
@@ -14,11 +18,15 @@ class Machine(models.Model):
                 return f"{self.nom} {self.prix}"
         def costs(self):
                 return self.prix
+        def json(self):
+                return {"nom":self.nom, "prix":self.prix}
 
 class Ingredient(models.Model):
         nom = models.CharField(max_length=100)
         def __str__(self):
                 return f"{self.nom}"
+        def json(self):
+                return {"nom":self.nom}
 
 class QuantiteIngredient(models.Model):
         ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
@@ -28,6 +36,8 @@ class QuantiteIngredient(models.Model):
         def costs(self, departement):
             print(self.ingredient, departement)
             return self.ingredient.prix_set.get(departement__numero=departement).prix * self.quantite
+        def json(self):
+                return {"ingredient":self.ingredient, "quantite":self.quantite}
 
 class Action(models.Model):
         machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
@@ -37,12 +47,16 @@ class Action(models.Model):
         action = models.CharField(max_length=100)
         def __str__(self):
                 return f"{self.machine} {self.commande} {self.duree} {self.ingredients} {self.action}"
+        def json(self):
+            return {"machine":self.machine, "commande":self.commande, "duree":self.duree, "ingredients":self.ingredients, "action":self.action}
 
 class Recette(models.Model):
         nom = models.CharField(max_length=100)
         action = models.ForeignKey(Action, on_delete=models.PROTECT)
         def __str__(self):
                 return f"{self.nom} {self.action}"
+        def json(self):
+            return {"nom":self.nom, "action":self.action}
 
 class Usine(models.Model):
         departement = models.ForeignKey(Departement, on_delete=models.PROTECT)
@@ -62,6 +76,8 @@ class Usine(models.Model):
                 return f"{self.departement} {self.taille} {self.machines} {self.recettes} {self.stocks}"
         def costs(self):
                 return (self.taille * self.departement.prixparMcarre ) + (self.costMachines())
+        def json(self):
+                return {"departement":self.departement, "taille":self.taille, "machines":self.machines, "recettes":self.recettes, "stocks":self.stocks}
 
 
 class Prix(models.Model):
@@ -70,6 +86,8 @@ class Prix(models.Model):
         prix = models.IntegerField()
         def __str__(self):
                 return f"{self.ingredient} {self.departement} {self.prix}"
+        def json(self):
+                return{"ingredient":self.ingredient, "departement":self.departement, "prix":self.prix}
 
 #Création des objets pour chaque classe
 
