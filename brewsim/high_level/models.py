@@ -37,7 +37,7 @@ class QuantiteIngredient(models.Model):
             print(self.ingredient, departement)
             return self.ingredient.prix_set.get(departement__numero=departement).prix * self.quantite
         def json(self):
-                return {"ingredient":self.ingredient, "quantite":self.quantite}
+                return {"ingredient":self.ingredient.id, "quantite":self.quantite}
 
 class Action(models.Model):
         machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
@@ -48,7 +48,7 @@ class Action(models.Model):
         def __str__(self):
                 return f"{self.machine} {self.commande} {self.duree} {self.ingredients} {self.action}"
         def json(self):
-            return {"machine":self.machine, "commande":self.commande, "duree":self.duree, "ingredients":self.ingredients, "action":self.action}
+            return {"machine":self.machine.id, "commande":self.commande, "duree":self.duree, "ingredients":[m.id for m in self.ingredients.all()], "action":self.action}
 
 class Recette(models.Model):
         nom = models.CharField(max_length=100)
@@ -56,7 +56,7 @@ class Recette(models.Model):
         def __str__(self):
                 return f"{self.nom} {self.action}"
         def json(self):
-            return {"nom":self.nom, "action":self.action}
+            return {"nom":self.nom, "action":self.action.id}
 
 class Usine(models.Model):
         departement = models.ForeignKey(Departement, on_delete=models.PROTECT)
@@ -77,7 +77,8 @@ class Usine(models.Model):
         def costs(self):
                 return (self.taille * self.departement.prixparMcarre ) + (self.costMachines())
         def json(self):
-                return {"departement":self.departement, "taille":self.taille, "machines":self.machines, "recettes":self.recettes, "stocks":self.stocks}
+                return {"departement":self.departement.id, "taille":self.taille,
+                "machines":[m.id for m in self.machines.all()], "recettes":[m.id for m in self.recettes.all()], "stocks":[m.id for m in self.stocks.all()]}
 
 
 class Prix(models.Model):
@@ -87,7 +88,7 @@ class Prix(models.Model):
         def __str__(self):
                 return f"{self.ingredient} {self.departement} {self.prix}"
         def json(self):
-                return{"ingredient":self.ingredient, "departement":self.departement, "prix":self.prix}
+                return{"ingredient":self.ingredient.id, "departement":self.departement.id, "prix":self.prix}
 
 #Création des objets pour chaque classe
 
